@@ -24,7 +24,7 @@ def timer(func) -> Callable:
     return wrapper
 
 
-def storage_cache_factory(path: str='/tmp/cache') -> Callable:
+def storage_cache_factory(path: str = '/tmp/cache') -> Callable:
     """Factory decorator for modifying the decorated function to cache
        and reuse results in a predefined path on the local storage
     :param path: Path to the local cache location
@@ -35,13 +35,14 @@ def storage_cache_factory(path: str='/tmp/cache') -> Callable:
         def wrapper(*args, **kwargs):
             copy_args = copy.deepcopy(list(args))
             all_args = []
+            # finding name of args and map name to value for having key value pair in the end
             arg_specs = inspect.getfullargspec(func)
             for i, arg_name in enumerate(arg_specs.args):
                 # print(arg_name)
                 if copy_args:
                     all_args.append((arg_name, copy_args.pop(0)))
                     print(all_args)
-                break
+
             all_args.extend([(k, v) for k, v in kwargs.items()])
             all_args = sorted(all_args)
             os.makedirs(path, exist_ok=True)
@@ -63,6 +64,7 @@ def storage_cache_factory(path: str='/tmp/cache') -> Callable:
         return wrapper
     return decorator
 
+
 if __name__ == "__main__":
     # Simple test for storage_cache_factory
 
@@ -75,10 +77,10 @@ if __name__ == "__main__":
         return a ** b
 
     print("First call")
-    res1 = expensive_function(123, 456)
+    res1 = expensive_function(123, b=455)
     print("Result: {}".format(res1))
     print("Second call")
-    res2 = expensive_function(123, 456)
+    res2 = expensive_function(123, 455)
     print("Result: {}".format(res2))
     # Clean the cache
     shutil.rmtree('/tmp/cache')
